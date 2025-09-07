@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RiseUP Timetable</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:linear-gradient(135deg,#4facfe,#00f2fe); color:#000; transition:0.3s; min-height:100vh; display:flex; flex-direction:column;}
+    body.dark{background:linear-gradient(135deg,#000428,#004e92); color:#fff;}
+    header{display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(255,255,255,0.1); backdrop-filter:blur(8px); position:relative;}
+    .title{font-size:1.5rem; font-weight:bold; cursor:pointer; text-align:center; flex:1;}
+    .menu{font-size:1.8rem; cursor:pointer; user-select:none;}
+    .menu-items{display:none; flex-direction:column; position:absolute; top:55px; left:10px; background:rgba(0,0,0,0.8); color:#fff; border-radius:10px; overflow:hidden; z-index:10;}
+    .menu-items button{background:none; border:none; padding:12px 20px; text-align:left; color:inherit; cursor:pointer; width:100%;}
+    .menu-items button:hover{background:rgba(255,255,255,0.2);}
+    main{flex:1; padding:20px; text-align:center; overflow-y:auto;}
+    .btn{display:block; width:80%; max-width:400px; margin:15px auto; padding:15px; font-size:1.1rem; font-weight:bold; border:none; border-radius:30px; background:#0078ff; color:#fff; cursor:pointer; transition:0.3s;}
+    .btn:hover{background:#005fcc;}
+    .section{display:none; text-align:left; margin:15px auto; max-width:700px; background:rgba(255,255,255,0.1); padding:15px; border-radius:12px;}
+    footer{display:flex; justify-content:flex-start; align-items:center; padding:10px 15px; font-size:0.9rem; opacity:0.8;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="menu" onclick="toggleMenu()">☰</div>
+  <div class="title" onclick="toggleTheme()">RiseUP</div>
+</header>
+
+<div class="menu-items" id="menuItems">
+  <button onclick="logout()">Logout</button>
+  <button onclick="enableNotifications()">Permission</button>
+</div>
+
+<main>
+  <button class="btn" onclick="toggleSection('monfri')">Monday – Friday</button>
+  <button class="btn" onclick="toggleSection('weekend')">Weekends</button>
+  <button class="btn" onclick="toggleSection('exams')">Exams</button>
+
+  <div id="monfri" class="section">
+    <h2>Monday – Friday</h2>
+    <ul>
+      <li>6:00 AM - WAKE UP</li>
+      <li>6:30 AM - FRESHEN UP</li>
+      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
+      <li>9:00 AM - 10:30 AM - BREAKFAST / GET READY</li>
+      <li>10:30 AM - 11:30 AM - TRAVEL TO COLLEGE</li>
+      <li>11:30 AM - 5:00 PM - COLLEGE</li>
+      <li>5:00 PM - 6:00 PM - TRAVEL HOME</li>
+      <li>6:00 PM - GAMES / SPORTS TIME</li>
+      <li>6:30 PM - RECHARGE & RELAX</li>
+      <li>7:15 PM - DINNER</li>
+      <li>8:00 PM - 10:30 PM - STUDY / ASSIGNMENTS / REVISION</li>
+      <li>10:30 PM - 12:00 AM - MOVIE TIME 🍿</li>
+      <li>12:00 AM - SLEEP</li>
+    </ul>
+  </div>
+
+  <div id="weekend" class="section">
+    <h2>Weekends</h2>
+    <ul>
+      <li>6:00 AM - WAKE UP</li>
+      <li>6:30 AM - FRESHEN UP</li>
+      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
+      <li>9:00 AM - 10:30 AM - BREAKFAST / GET READY</li>
+      <li>10:30 AM - 1:00 PM - FREE TIME / PLAY</li>
+      <li>1:00 PM - 2:00 PM - LUNCH</li>
+      <li>2:00 PM - 4:30 PM - NAP</li>
+      <li>4:30 PM - 7:00 PM - FUN / GAMES</li>
+      <li>7:30 PM - 8:00 PM - DINNER</li>
+      <li>8:00 PM - 9:30 PM - EVENING STUDY</li>
+      <li>9:30 PM - 10:30 PM - FREE TIME</li>
+      <li>10:30 PM - 11:30 PM - MOVIE</li>
+      <li>11:30 PM - SLEEP</li>
+    </ul>
+  </div>
+
+  <div id="exams" class="section">
+    <h2>Exams</h2>
+    <ul>
+      <li>6:00 AM - WAKE UP</li>
+      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
+      <li>9:30 AM - 10:30 AM - QUICK REVISION</li>
+      <li>10:30 AM - 11:30 AM - TRAVEL TO COLLEGE</li>
+      <li>11:30 AM - 5:00 PM - COLLEGE / REVISION</li>
+      <li>5:00 PM - 6:00 PM - TRAVEL HOME</li>
+      <li>6:30 PM - 8:30 PM - EVENING REVISION / PAST PAPERS</li>
+      <li>8:30 PM - 9:15 PM - DINNER</li>
+      <li>9:15 PM - 10:00 PM - LIGHT REVISION</li>
+      <li>10:00 PM - 10:30 PM - PLAN / MEDITATE</li>
+      <li>10:30 PM - SLEEP</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  Owner: <b>Hasnain Siddique</b> – 11th CS Student
+</footer>
+
+<script>
+function toggleTheme(){document.body.classList.toggle('dark');}
+function toggleMenu(){const menu=document.getElementById('menuItems'); menu.style.display=menu.style.display==='flex'?'none':'flex';}
+function logout(){alert('Logged out!');}
+function enableNotifications(){
+  if(Notification.permission==='granted'){alert("Notification already enabled!");} 
+  else {Notification.requestPermission().then(p=>{if(p==='granted') alert("Notification Activated Successfully!");});}
+}
+function toggleSection(id){const sections=document.querySelectorAll('.section'); sections.forEach(s=>s.style.display='none'); document.getElementById(id).style.display='block';}
+
+// ---------- Real-time Notifications ----------
+const timetable = [
+  {time:"06:00", text:"WAKE UP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
+  {time:"06:30", text:"FRESHEN UP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
+  {time:"06:30", text:"STUDY TOUGH SUBJECT", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
+  {time:"09:00", text:"BREAKFAST / GET READY", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
+  {time:"10:30", text:"TRAVEL TO COLLEGE", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"11:30", text:"COLLEGE", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"17:00", text:"TRAVEL HOME", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"18:00", text:"GAMES / SPORTS TIME", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"18:30", text:"RECHARGE & RELAX", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"19:15", text:"DINNER", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"20:00", text:"STUDY / ASSIGNMENTS / REVISION", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"22:30", text:"MOVIE TIME", days:["Mon","Tue","Wed","Thu","Fri"]},
+  {time:"00:00", text:"SLEEP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]}
+];
+
+function scheduleNotifications() {
+  if(Notification.permission!=="granted") return;
+  setInterval(()=>{
+    const now=new Date();
+    const hh=String(now.getHours()).padStart(2,"0");
+    const mm=String(now.getMinutes()).padStart(2,"0");
+    const day=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][now.getDay()];
+    timetable.forEach(item=>{
+      if(item.days.includes(day) && item.time===`${hh}:${mm}`){
+        new Notification(item.text,{body:"RiseUP Reminder!",icon:""});
+      }
+    });
+  },60000); // check every minute
+}
+
+enableNotifications();
+scheduleNotifications();
+</script>
+
+</body>
+</html>
