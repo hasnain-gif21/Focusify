@@ -1,148 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RiseUP Timetable</title>
-  <style>
-    body { margin:0; font-family:Arial,sans-serif; background:linear-gradient(135deg,#4facfe,#00f2fe); color:#000; transition:0.3s; min-height:100vh; display:flex; flex-direction:column;}
-    body.dark{background:linear-gradient(135deg,#000428,#004e92); color:#fff;}
-    header{display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(255,255,255,0.1); backdrop-filter:blur(8px); position:relative;}
-    .title{font-size:1.5rem; font-weight:bold; cursor:pointer; text-align:center; flex:1;}
-    .menu{font-size:1.8rem; cursor:pointer; user-select:none;}
-    .menu-items{display:none; flex-direction:column; position:absolute; top:55px; left:10px; background:rgba(0,0,0,0.8); color:#fff; border-radius:10px; overflow:hidden; z-index:10;}
-    .menu-items button{background:none; border:none; padding:12px 20px; text-align:left; color:inherit; cursor:pointer; width:100%;}
-    .menu-items button:hover{background:rgba(255,255,255,0.2);}
-    main{flex:1; padding:20px; text-align:center; overflow-y:auto;}
-    .btn{display:block; width:80%; max-width:400px; margin:15px auto; padding:15px; font-size:1.1rem; font-weight:bold; border:none; border-radius:30px; background:#0078ff; color:#fff; cursor:pointer; transition:0.3s;}
-    .btn:hover{background:#005fcc;}
-    .section{display:none; text-align:left; margin:15px auto; max-width:700px; background:rgba(255,255,255,0.1); padding:15px; border-radius:12px;}
-    footer{display:flex; justify-content:flex-start; align-items:center; padding:10px 15px; font-size:0.9rem; opacity:0.8;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Focusify™ Timetable</title>
+<style>
+  :root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --accent-color: #ff9800;
+    --background-light: linear-gradient(135deg, #e0f2ff, #c9e6ff);
+    --background-dark: linear-gradient(135deg, #001f3f, #003366);
+    --text-light: #2c3e50;
+    --text-dark: #ecf0f1;
+    --card-bg-light: rgba(255, 255, 255, 0.8);
+    --card-bg-dark: rgba(0, 0, 0, 0.4);
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--background-light);
+    color: var(--text-light);
+    transition: background 0.5s ease, color 0.5s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.dark-theme {
+    background: var(--background-dark);
+    color: var(--text-dark);
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .dropdown-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 1rem;
+    background: var(--card-bg-dark);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 99;
+    min-width: 150px;
+    padding: 0.5rem 0;
+  }
+
+  .dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    text-align: left;
+    color: inherit;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .dropdown-menu button:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  main {
+    flex-grow: 1;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: transparent;
+    border-radius: 12px;
+  }
+
+  .toggle-button {
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    background-color: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .toggle-button.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  }
+
+  .schedule-section {
+    width: 95%;
+    max-width: 700px;
+    background: var(--card-bg-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: none;
+    position: relative;
+    margin-top: 1rem;
+  }
+
+  body.dark-theme .schedule-section {
+    background: var(--card-bg-dark);
+  }
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+  }
+
+  .task-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+  }
+
+  body.dark-theme .task-item {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .task-item:last-child {
+    border-bottom: none;
+  }
+
+  .task-toggle-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .task-toggle-btn.on {
+    background: #28a745;
+    color: #fff;
+  }
+
+  .task-toggle-btn.off {
+    background: #ccc;
+    color: #000;
+  }
+
+  .add-task-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+    box-shadow: var(--shadow);
+  }
+
+  .add-task-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  .add-menu {
+    display: none;
+    position: absolute;
+    top: 55px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: var(--shadow);
+    z-index: 10;
+  }
+
+  .add-menu button {
+    display: block;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+  }
+
+  footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: auto;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <div class="menu" onclick="toggleMenu()">☰</div>
-  <div class="title" onclick="toggleTheme()">RiseUP</div>
-</header>
+  <header>
+    <button class="nav-btn" onclick="toggleMenu()">☰</button>
+    <div class="title" onclick="toggleTheme()">Focusify™</div>
+  </header>
 
-<div class="menu-items" id="menuItems">
-  <button onclick="logout()">Logout</button>
-  <button onclick="enableNotifications()">Permission</button>
-</div>
-
-<main>
-  <button class="btn" onclick="toggleSection('monfri')">Monday – Friday</button>
-  <button class="btn" onclick="toggleSection('weekend')">Weekends</button>
-  <button class="btn" onclick="toggleSection('exams')">Exams</button>
-
-  <div id="monfri" class="section">
-    <h2>Monday – Friday</h2>
-    <ul>
-      <li>6:00 AM - WAKE UP</li>
-      <li>6:30 AM - FRESHEN UP</li>
-      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
-      <li>9:00 AM - 10:30 AM - BREAKFAST / GET READY</li>
-      <li>10:30 AM - 11:30 AM - TRAVEL TO COLLEGE</li>
-      <li>11:30 AM - 5:00 PM - COLLEGE</li>
-      <li>5:00 PM - 6:00 PM - TRAVEL HOME</li>
-      <li>6:00 PM - GAMES / SPORTS TIME</li>
-      <li>6:30 PM - RECHARGE & RELAX</li>
-      <li>7:15 PM - DINNER</li>
-      <li>8:00 PM - 10:30 PM - STUDY / ASSIGNMENTS / REVISION</li>
-      <li>10:30 PM - 12:00 AM - MOVIE TIME 🍿</li>
-      <li>12:00 AM - SLEEP</li>
-    </ul>
+  <div class="dropdown-menu" id="menuItems">
+    <button onclick="logout()">Logout</button>
+    <button onclick="requestNotificationPermission()">Enable Notifications</button>
   </div>
 
-  <div id="weekend" class="section">
-    <h2>Weekends</h2>
-    <ul>
-      <li>6:00 AM - WAKE UP</li>
-      <li>6:30 AM - FRESHEN UP</li>
-      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
-      <li>9:00 AM - 10:30 AM - BREAKFAST / GET READY</li>
-      <li>10:30 AM - 1:00 PM - FREE TIME / PLAY</li>
-      <li>1:00 PM - 2:00 PM - LUNCH</li>
-      <li>2:00 PM - 4:30 PM - NAP</li>
-      <li>4:30 PM - 7:00 PM - FUN / GAMES</li>
-      <li>7:30 PM - 8:00 PM - DINNER</li>
-      <li>8:00 PM - 9:30 PM - EVENING STUDY</li>
-      <li>9:30 PM - 10:30 PM - FREE TIME</li>
-      <li>10:30 PM - 11:30 PM - MOVIE</li>
-      <li>11:30 PM - SLEEP</li>
-    </ul>
-  </div>
+  <main>
+    <div class="button-container">
+      <button class="toggle-button" onclick="toggleAndShowSection(this, 'monfri-section')">Monday–Friday</button>
+      <button class="toggle-button" onclick="toggleAndShowSection(this, 'weekend-section')">Weekends</button>
+      <button class="toggle-button" onclick="toggleAndShowSection(this, 'exams-section')">Exams</button>
+    </div>
 
-  <div id="exams" class="section">
-    <h2>Exams</h2>
-    <ul>
-      <li>6:00 AM - WAKE UP</li>
-      <li>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</li>
-      <li>9:30 AM - 10:30 AM - QUICK REVISION</li>
-      <li>10:30 AM - 11:30 AM - TRAVEL TO COLLEGE</li>
-      <li>11:30 AM - 5:00 PM - COLLEGE / REVISION</li>
-      <li>5:00 PM - 6:00 PM - TRAVEL HOME</li>
-      <li>6:30 PM - 8:30 PM - EVENING REVISION / PAST PAPERS</li>
-      <li>8:30 PM - 9:15 PM - DINNER</li>
-      <li>9:15 PM - 10:00 PM - LIGHT REVISION</li>
-      <li>10:00 PM - 10:30 PM - PLAN / MEDITATE</li>
-      <li>10:30 PM - SLEEP</li>
-    </ul>
-  </div>
+    <div id="monfri-section" class="schedule-section">
+      <h2>Monday – Friday</h2>
+      <button class="add-task-btn" onclick="toggleAddMenu('monfri-add-menu')">+</button>
+      <div class="add-menu" id="monfri-add-menu">
+        <button onclick="editSection('monfri-section')">Edit Timetable</button>
+        <button onclick="addNewTask('monfri-section')">Add New Task</button>
+      </div>
+      <ul class="task-list" id="monfri-list">
+        <li class="task-item"><span>6:00 AM - WAKE UP</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>6:30 AM - FRESHEN UP</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>9:00 AM - 10:30 AM - BREAKFAST / GET READY</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>10:30 AM - 11:30 AM - TRAVEL TO COLLEGE</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+      </ul>
+    </div>
 
-</main>
+    <div id="weekend-section" class="schedule-section">
+      <h2>Weekends</h2>
+      <button class="add-task-btn" onclick="toggleAddMenu('weekend-add-menu')">+</button>
+      <div class="add-menu" id="weekend-add-menu">
+        <button onclick="editSection('weekend-section')">Edit Timetable</button>
+        <button onclick="addNewTask('weekend-section')">Add New Task</button>
+      </div>
+      <ul class="task-list" id="weekend-list">
+        <li class="task-item"><span>6:00 AM - WAKE UP</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>6:30 AM - FRESHEN UP</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>6:30 AM - 9:00 AM - STUDY TOUGH SUBJECT</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>9:00 AM - 10:30 AM - BREAKFAST / GET READY</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>10:30 AM - 1:00 PM - FREE TIME / PLAY</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+      </ul>
+    </div>
 
-<footer>
-  Owner: <b>Hasnain Siddique</b> – 11th CS Student
-</footer>
+    <div id="exams-section" class="schedule-section">
+      <h2>Exams</h2>
+      <button class="add-task-btn" onclick="toggleAddMenu('exams-add-menu')">+</button>
+      <div class="add-menu" id="exams-add-menu">
+        <button onclick="editSection('exams-section')">Edit Timetable</button>
+        <button onclick="addNewTask('exams-section')">Add New Task</button>
+      </div>
+      <ul class="task-list" id="exams-list">
+        <li class="task-item"><span>6:00 AM - WAKE UP</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>6:30 AM - STUDY TOUGH SUBJECT</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+        <li class="task-item"><span>9:30 AM - 10:30 AM - QUICK REVISION</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button></li>
+      </ul>
+    </div>
+  </main>
 
-<script>
-function toggleTheme(){document.body.classList.toggle('dark');}
-function toggleMenu(){const menu=document.getElementById('menuItems'); menu.style.display=menu.style.display==='flex'?'none':'flex';}
-function logout(){alert('Logged out!');}
-function enableNotifications(){
-  if(Notification.permission==='granted'){alert("Notification already enabled!");} 
-  else {Notification.requestPermission().then(p=>{if(p==='granted') alert("Notification Activated Successfully!");});}
-}
-function toggleSection(id){const sections=document.querySelectorAll('.section'); sections.forEach(s=>s.style.display='none'); document.getElementById(id).style.display='block';}
+  <footer>
+    Owner: <b>Hasnain Siddique</b> – 11th CS Student
+  </footer>
 
-// ---------- Real-time Notifications ----------
-const timetable = [
-  {time:"06:00", text:"WAKE UP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
-  {time:"06:30", text:"FRESHEN UP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
-  {time:"06:30", text:"STUDY TOUGH SUBJECT", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
-  {time:"09:00", text:"BREAKFAST / GET READY", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
-  {time:"10:30", text:"TRAVEL TO COLLEGE", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"11:30", text:"COLLEGE", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"17:00", text:"TRAVEL HOME", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"18:00", text:"GAMES / SPORTS TIME", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"18:30", text:"RECHARGE & RELAX", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"19:15", text:"DINNER", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"20:00", text:"STUDY / ASSIGNMENTS / REVISION", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"22:30", text:"MOVIE TIME", days:["Mon","Tue","Wed","Thu","Fri"]},
-  {time:"00:00", text:"SLEEP", days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]}
-];
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+    }
 
-function scheduleNotifications() {
-  if(Notification.permission!=="granted") return;
-  setInterval(()=>{
-    const now=new Date();
-    const hh=String(now.getHours()).padStart(2,"0");
-    const mm=String(now.getMinutes()).padStart(2,"0");
-    const day=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][now.getDay()];
-    timetable.forEach(item=>{
-      if(item.days.includes(day) && item.time===`${hh}:${mm}`){
-        new Notification(item.text,{body:"RiseUP Reminder!",icon:""});
+    function toggleMenu() {
+      const menu = document.getElementById('menuItems');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function logout() {
+      alert('Logged out successfully!');
+    }
+
+    function requestNotificationPermission() {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            alert("Notifications activated! You'll be able to receive reminders.");
+          } else {
+            alert("Notification permission denied. You can re-enable it in your browser settings.");
+          }
+        });
+      } else {
+        alert("Your browser does not support notifications.");
       }
-    });
-  },60000); // check every minute
-}
+    }
 
-enableNotifications();
-scheduleNotifications();
-</script>
+    function toggleAndShowSection(clickedButton, sectionId) {
+      const allButtons = document.querySelectorAll('.toggle-button');
+      allButtons.forEach(button => {
+        button.classList.remove('active');
+      });
+      clickedButton.classList.add('active');
+
+      const allSections = document.querySelectorAll('.schedule-section');
+      allSections.forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function toggleTask(button) {
+      const taskItem = button.closest('.task-item');
+      if (button.classList.contains('on')) {
+        button.classList.remove('on');
+        button.classList.add('off');
+        button.textContent = 'ON';
+        taskItem.style.opacity = '1';
+      } else {
+        button.classList.remove('off');
+        button.classList.add('on');
+        button.textContent = 'OFF';
+      }
+    }
+
+    function toggleAddMenu(id) {
+      const menu = document.getElementById(id);
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function editSection(sectionId) {
+      alert(`Editing the timetable for ${sectionId.replace('-section', '')}. This feature would let you rearrange or remove tasks.`);
+    }
+
+    function addNewTask(sectionId) {
+      const taskName = prompt("Enter the new task name (e.g., '10:00 AM - Read a book')");
+      if (taskName) {
+        const list = document.getElementById(sectionId.replace('-section', '') + '-list');
+        const listItem = document.createElement('li');
+        listItem.classList.add('task-item');
+        listItem.innerHTML = `<span>${taskName}</span> <button class="task-toggle-btn off" onclick="toggleTask(this)">ON</button>`;
+        list.appendChild(listItem);
+        alert('New task added!');
+      }
+    }
+  </script>
 
 </body>
 </html>
